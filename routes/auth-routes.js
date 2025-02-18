@@ -8,5 +8,7 @@ router.use(bodyParser.urlencoded({extended: true}));
 
 router.get('/mail-verification', userControllers.mailVerification);
 router.get('/reset-password', userControllers.resetPassword);
+router.post('/reset-password', userControllers.updatePassword);
+router.get('/reset-success', userControllers.resetSuccess);
 
 module.exports = router;
