@@ -2,9 +2,11 @@ const User = require("../models/user-model");
 const bcrypt = require("bcrypt");
 const { validationResult } = require("express-validator");
 const mailer = require("../helpers/mailer");
+const deleteFile = require("../helpers/deleteFile");
 const PasswordReset = require("../models/passwordReset");
 const randomstring = require("randomstring");
 const JWT = require("jsonwebtoken");
+const path = require("path");
 
 const userRegister = async (req, res) => {
   try {
@@ -357,12 +359,19 @@ const updateProfile = async (req, res) => {
       mobile,
     };
 
+    const user_id = req.user.user._id;
+
     if (req.file !== undefined) {
       data.image = "image/" + req.file.filename;
+
+      const oldUser = await User.findOne({ id: user_id });
+      const oldFilePath = path.join(__dirname, "../public/" + oldUser.image);
+
+      deleteFile(oldFilePath);
     }
 
     const userData = await User.findByIdAndUpdate(
-      { _id: req.user.user._id },
+      { _id: user_id },
       {
         $set: data,
       },
